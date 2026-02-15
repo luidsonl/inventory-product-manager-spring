@@ -5,8 +5,8 @@ import com.github.luidsonl.inventory_manager_api.enums.MeasureUnitsType;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity 
-@Getter 
+@Entity
+@Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +25,9 @@ public class RawMaterial {
     @Enumerated(EnumType.STRING)
     private MeasureUnitsType unit;
 
+    @OneToMany(mappedBy = "rawMaterial", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<RawMaterialPackaging> packagings;
+
     @Column(nullable = false)
     private boolean fractionable = true;
-
 }
