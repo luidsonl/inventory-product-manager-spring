@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { env } from '../env';
 import type {
     RawMaterialDTO,
     ProductDTO,
@@ -13,7 +14,7 @@ import type {
 
 export const apiService = createApi({
     reducerPath: 'api',
-    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8080/api' }),
+    baseQuery: fetchBaseQuery({ baseUrl: env.API_BASE_URL }),
     tagTypes: ['RawMaterial', 'Product', 'Packaging', 'ProductTransaction', 'PackagingTransaction'],
     endpoints: (builder) => ({
         // Raw Materials
