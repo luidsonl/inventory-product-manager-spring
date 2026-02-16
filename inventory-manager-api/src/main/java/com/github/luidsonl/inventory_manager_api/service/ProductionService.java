@@ -23,7 +23,7 @@ public class ProductionService {
 
     private final ProductRepository productRepository;
 
-    public ProductionSuggestionDTO suggestProduction() {
+    public ProductionSuggestionDTO getProductionSuggestion() {
         List<Product> products = productRepository.findAll();
 
         List<Product> sortedProducts = products.stream()
@@ -59,7 +59,6 @@ public class ProductionService {
                 continue;
             }
 
-            // Calculate max quantity of this product that can be produced
             BigDecimal maxProducible = null;
 
             for (ProductRawMaterial prm : product.getRawMaterials()) {

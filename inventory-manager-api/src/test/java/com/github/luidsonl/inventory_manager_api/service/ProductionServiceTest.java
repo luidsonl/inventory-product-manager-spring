@@ -86,7 +86,7 @@ class ProductionServiceTest {
 
         when(productRepository.findAll()).thenReturn(Arrays.asList(p1, p2));
 
-        ProductionSuggestionDTO suggestion = productionService.suggestProduction();
+        ProductionSuggestionDTO suggestion = productionService.getProductionSuggestion();
 
         assertThat(suggestion.getProducts()).hasSize(1);
         assertThat(suggestion.getProducts().get(0).getProductName()).isEqualTo("Expensive Product");
