@@ -69,6 +69,19 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("Should find product by code and return DTO")
+    void testFindByCode() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setCode("P001");
+        when(productRepository.findByCode("P001")).thenReturn(Optional.of(product));
+
+        ProductDTO result = productService.findByCode("P001");
+
+        assertThat(result.getCode()).isEqualTo("P001");
+    }
+
+    @Test
     @DisplayName("Should save a product from DTO")
     void testSave() {
         Product product = new Product();

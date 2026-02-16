@@ -57,6 +57,19 @@ class RawMaterialServiceTest {
     }
 
     @Test
+    @DisplayName("Should find raw material by code and return DTO")
+    void testFindByCode() {
+        RawMaterial material = new RawMaterial();
+        material.setId(1L);
+        material.setCode("WATER");
+        when(rawMaterialRepository.findByCode("WATER")).thenReturn(Optional.of(material));
+
+        RawMaterialDTO result = rawMaterialService.findByCode("WATER");
+
+        assertThat(result.getCode()).isEqualTo("WATER");
+    }
+
+    @Test
     @DisplayName("Should save a raw material from DTO")
     void testSave() {
         RawMaterial material = new RawMaterial();

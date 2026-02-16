@@ -74,6 +74,27 @@ class RawMaterialControllerTest {
     }
 
     @Test
+    @DisplayName("Should find raw material by code")
+    void testFindByCode() throws Exception {
+        RawMaterialDTO dto = RawMaterialDTO.builder().id(1L).code("RM001").name("Sugar").build();
+        when(rawMaterialService.findByCode("RM001")).thenReturn(dto);
+
+        mockMvc.perform(get("/api/raw-materials/code/RM001"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("RM001"));
+    }
+
+    @Test
+    @DisplayName("Should return 404 when raw material code not found")
+    void testFindByCodeNotFound() throws Exception {
+        when(rawMaterialService.findByCode("NONE"))
+                .thenThrow(new ResourceNotFoundException("Raw Material not found with code: NONE"));
+
+        mockMvc.perform(get("/api/raw-materials/code/NONE"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("Should create raw material and verify payload mapping")
     void testSave() throws Exception {
         RawMaterialDTO savedDTO = RawMaterialDTO.builder().id(5L).code("SALT").name("Salt").build();

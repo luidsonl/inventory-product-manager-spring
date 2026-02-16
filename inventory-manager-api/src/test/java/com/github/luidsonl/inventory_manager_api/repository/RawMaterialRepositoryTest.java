@@ -37,4 +37,18 @@ class RawMaterialRepositoryTest {
         assertThat(foundMaterial.get().getName()).isEqualTo("Test Material");
         assertThat(foundMaterial.get().getUnit()).isEqualTo(MeasureUnitsType.KILOGRAM);
     }
+
+    @Test
+    @DisplayName("Should find raw material by code")
+    void testFindByCode() {
+        RawMaterial rawMaterial = new RawMaterial();
+        rawMaterial.setCode("RAW_CODE");
+        rawMaterial.setName("Raw Name");
+        rawMaterial.setUnit(MeasureUnitsType.GRAM);
+        rawMaterialRepository.save(rawMaterial);
+
+        java.util.Optional<RawMaterial> found = rawMaterialRepository.findByCode("RAW_CODE");
+        assertThat(found).isPresent();
+        assertThat(found.get().getName()).isEqualTo("Raw Name");
+    }
 }

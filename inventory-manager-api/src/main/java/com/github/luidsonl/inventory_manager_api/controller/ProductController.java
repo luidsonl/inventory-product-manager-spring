@@ -33,6 +33,12 @@ public class ProductController {
         return ResponseEntity.ok(productService.findById(id));
     }
 
+    @GetMapping("/code/{code}")
+    @Operation(summary = "Find a product by its code")
+    public ResponseEntity<ProductDTO> findByCode(@PathVariable String code) {
+        return ResponseEntity.ok(productService.findByCode(code));
+    }
+
     @PostMapping
     @Operation(summary = "Create a new product")
     public ResponseEntity<ProductDTO> save(@RequestBody ProductDTO productDTO) {

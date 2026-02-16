@@ -38,6 +38,12 @@ public class ProductService {
         return convertToDTO(product);
     }
 
+    public ProductDTO findByCode(String code) {
+        Product product = productRepository.findByCode(code)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with code: " + code));
+        return convertToDTO(product);
+    }
+
     @Transactional
     public ProductDTO save(ProductDTO dto) {
         Product product = convertToEntity(dto);

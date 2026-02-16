@@ -31,6 +31,12 @@ public class RawMaterialController {
         return ResponseEntity.ok(rawMaterialService.findById(id));
     }
 
+    @GetMapping("/code/{code}")
+    @Operation(summary = "Find a raw material by its code")
+    public ResponseEntity<RawMaterialDTO> findByCode(@PathVariable String code) {
+        return ResponseEntity.ok(rawMaterialService.findByCode(code));
+    }
+
     @PostMapping
     @Operation(summary = "Create a new raw material")
     public ResponseEntity<RawMaterialDTO> save(@RequestBody RawMaterialDTO rawMaterialDTO) {

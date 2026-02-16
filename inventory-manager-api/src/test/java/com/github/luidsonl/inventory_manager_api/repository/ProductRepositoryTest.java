@@ -40,6 +40,21 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @DisplayName("Should find product by code")
+    void testFindByCode() {
+        Product product = new Product();
+        product.setCode("PROD_CODE");
+        product.setName("Product Name");
+        product.setPrice(BigDecimal.ONE);
+        product.setFractionable(false);
+        productRepository.save(product);
+
+        java.util.Optional<Product> found = productRepository.findByCode("PROD_CODE");
+        assertThat(found).isPresent();
+        assertThat(found.get().getName()).isEqualTo("Product Name");
+    }
+
+    @Test
     @DisplayName("Should find products with current stock greater than specified value")
     void testFindByCurrentStockGreaterThan() {
         Product highStockProduct = new Product();

@@ -85,6 +85,27 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Should find product by code")
+    void testFindByCode() throws Exception {
+        ProductDTO productDTO = ProductDTO.builder().id(1L).code("P001").name("Test").build();
+        when(productService.findByCode("P001")).thenReturn(productDTO);
+
+        mockMvc.perform(get("/api/products/code/P001"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("P001"));
+    }
+
+    @Test
+    @DisplayName("Should return 404 when product code not found")
+    void testFindByCodeNotFound() throws Exception {
+        when(productService.findByCode("XYZ"))
+                .thenThrow(new ResourceNotFoundException("Product not found with code: XYZ"));
+
+        mockMvc.perform(get("/api/products/code/XYZ"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("Should create product and verify input mapping")
     void testSave() throws Exception {
         ProductDTO savedDTO = ProductDTO.builder().id(123L).code("NEW_P").name("New Product")

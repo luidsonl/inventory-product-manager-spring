@@ -29,6 +29,12 @@ public class RawMaterialService {
         return convertToDTO(rawMaterial);
     }
 
+    public RawMaterialDTO findByCode(String code) {
+        RawMaterial rawMaterial = rawMaterialRepository.findByCode(code)
+                .orElseThrow(() -> new ResourceNotFoundException("Raw Material not found with code: " + code));
+        return convertToDTO(rawMaterial);
+    }
+
     @Transactional
     public RawMaterialDTO save(RawMaterialDTO rawMaterialDTO) {
         RawMaterial rawMaterial = convertToEntity(rawMaterialDTO);
