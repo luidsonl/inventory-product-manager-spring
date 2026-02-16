@@ -6,15 +6,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/production")
 @RequiredArgsConstructor
+@Tag(name = "Production", description = "Endpoints for production suggestions and analysis")
 public class ProductionController {
 
     private final ProductionService productionService;
 
     @GetMapping("/suggest")
+    @Operation(summary = "Get production suggestions based on current stock levels")
     public ProductionSuggestionDTO suggest() {
         return productionService.getProductionSuggestion();
     }
