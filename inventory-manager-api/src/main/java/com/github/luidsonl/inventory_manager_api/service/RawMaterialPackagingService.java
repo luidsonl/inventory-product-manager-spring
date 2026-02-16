@@ -83,7 +83,6 @@ public class RawMaterialPackagingService {
 
     private RawMaterialPackaging convertToEntity(RawMaterialPackagingDTO dto) {
         RawMaterialPackaging entity = new RawMaterialPackaging();
-        entity.setId(dto.getId());
         entity.setName(dto.getName());
         entity.setQuantityInside(dto.getQuantityInside());
         entity.setCurrentStock(dto.getCurrentStock());

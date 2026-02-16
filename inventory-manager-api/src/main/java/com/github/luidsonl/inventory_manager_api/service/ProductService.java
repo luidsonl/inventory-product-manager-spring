@@ -107,7 +107,6 @@ public class ProductService {
 
     private Product convertToEntity(ProductDTO dto) {
         Product entity = new Product();
-        entity.setId(dto.getId());
         entity.setName(dto.getName());
         entity.setPrice(dto.getPrice());
         entity.setFractionable(dto.isFractionable());

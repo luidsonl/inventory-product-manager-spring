@@ -91,6 +91,21 @@ class RawMaterialControllerTest {
     }
 
     @Test
+    @DisplayName("Should create raw material even if ID is provided in payload (ID should be ignored)")
+    void testSaveWithId() throws Exception {
+        RawMaterialDTO savedDTO = RawMaterialDTO.builder().id(5L).name("Salt").build();
+        when(rawMaterialService.save(any(RawMaterialDTO.class))).thenReturn(savedDTO);
+
+        mockMvc.perform(post("/api/raw-materials")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"id\": 0, \"name\":\"Salt\", \"unit\": \"GRAM\", \"fractionable\": false}"))
+                .andExpect(status().isCreated())
+                .andExpect(content().json("{\"id\": 5, \"name\": \"Salt\"}"));
+
+        verify(rawMaterialService).save(any(RawMaterialDTO.class));
+    }
+
+    @Test
     @DisplayName("Should update raw material and verify parameters")
     void testUpdate() throws Exception {
         RawMaterialDTO responseDTO = RawMaterialDTO.builder().id(1L).name("Updated Salt").build();

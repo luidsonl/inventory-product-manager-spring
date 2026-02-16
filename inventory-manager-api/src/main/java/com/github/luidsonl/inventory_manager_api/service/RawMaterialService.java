@@ -67,7 +67,6 @@ public class RawMaterialService {
 
     private RawMaterial convertToEntity(RawMaterialDTO dto) {
         RawMaterial entity = new RawMaterial();
-        entity.setId(dto.getId()); // Should be null for new entities
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         entity.setUnit(dto.getUnit());
