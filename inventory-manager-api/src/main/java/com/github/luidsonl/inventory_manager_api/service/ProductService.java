@@ -50,6 +50,7 @@ public class ProductService {
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
 
+        existing.setCode(dto.getCode());
         existing.setName(dto.getName());
         existing.setPrice(dto.getPrice());
         existing.setFractionable(dto.isFractionable());
@@ -87,6 +88,7 @@ public class ProductService {
     private ProductDTO convertToDTO(Product entity) {
         return ProductDTO.builder()
                 .id(entity.getId())
+                .code(entity.getCode())
                 .name(entity.getName())
                 .price(entity.getPrice())
                 .fractionable(entity.isFractionable())
@@ -107,6 +109,7 @@ public class ProductService {
 
     private Product convertToEntity(ProductDTO dto) {
         Product entity = new Product();
+        entity.setCode(dto.getCode());
         entity.setName(dto.getName());
         entity.setPrice(dto.getPrice());
         entity.setFractionable(dto.isFractionable());

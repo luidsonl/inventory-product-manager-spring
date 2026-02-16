@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class ProductDTO {
     private Long id;
+    private String code;
     private String name;
     private BigDecimal price;
     private boolean fractionable;

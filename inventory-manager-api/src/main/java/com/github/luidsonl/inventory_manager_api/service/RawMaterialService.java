@@ -41,6 +41,7 @@ public class RawMaterialService {
         RawMaterial existing = rawMaterialRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Raw Material not found with id: " + id));
 
+        existing.setCode(rawMaterialDTO.getCode());
         existing.setName(rawMaterialDTO.getName());
         existing.setDescription(rawMaterialDTO.getDescription());
         existing.setUnit(rawMaterialDTO.getUnit());
@@ -58,6 +59,7 @@ public class RawMaterialService {
     private RawMaterialDTO convertToDTO(RawMaterial rawMaterial) {
         return RawMaterialDTO.builder()
                 .id(rawMaterial.getId())
+                .code(rawMaterial.getCode())
                 .name(rawMaterial.getName())
                 .description(rawMaterial.getDescription())
                 .unit(rawMaterial.getUnit())
@@ -67,6 +69,7 @@ public class RawMaterialService {
 
     private RawMaterial convertToEntity(RawMaterialDTO dto) {
         RawMaterial entity = new RawMaterial();
+        entity.setCode(dto.getCode());
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         entity.setUnit(dto.getUnit());

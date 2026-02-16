@@ -21,6 +21,7 @@ class RawMaterialRepositoryTest {
     @DisplayName("Should save and retrieve a raw material successfully")
     void testSaveAndFindRawMaterial() {
         RawMaterial rawMaterial = new RawMaterial();
+        rawMaterial.setCode("RM_001");
         rawMaterial.setName("Test Material");
         rawMaterial.setUnit(MeasureUnitsType.KILOGRAM);
         rawMaterial.setFractionable(true);

@@ -22,6 +22,7 @@ class ProductRepositoryTest {
     @DisplayName("Should save and retrieve a product successfully")
     void testSaveAndFindProduct() {
         Product product = new Product();
+        product.setCode("P_TEST");
         product.setName("Test Product");
         product.setPrice(new BigDecimal("100.00"));
         product.setFractionable(false);
@@ -42,6 +43,7 @@ class ProductRepositoryTest {
     @DisplayName("Should find products with current stock greater than specified value")
     void testFindByCurrentStockGreaterThan() {
         Product highStockProduct = new Product();
+        highStockProduct.setCode("P_HIGH");
         highStockProduct.setName("High Stock Product");
         highStockProduct.setPrice(new BigDecimal("50.00"));
         highStockProduct.setFractionable(true);
@@ -49,6 +51,7 @@ class ProductRepositoryTest {
         productRepository.save(highStockProduct);
 
         Product lowStockProduct = new Product();
+        lowStockProduct.setCode("P_LOW");
         lowStockProduct.setName("Low Stock Product");
         lowStockProduct.setPrice(new BigDecimal("20.00"));
         lowStockProduct.setFractionable(false);

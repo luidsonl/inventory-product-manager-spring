@@ -31,12 +31,14 @@ class RawMaterialServiceTest {
     @DisplayName("Should return all raw materials as DTOs")
     void testFindAll() {
         RawMaterial material = new RawMaterial();
+        material.setCode("WATER");
         material.setName("Water");
         when(rawMaterialRepository.findAll()).thenReturn(Collections.singletonList(material));
 
         List<RawMaterialDTO> result = rawMaterialService.findAll();
 
         assertThat(result).hasSize(1);
+        assertThat(result.get(0).getCode()).isEqualTo("WATER");
         assertThat(result.get(0).getName()).isEqualTo("Water");
     }
 
@@ -45,24 +47,28 @@ class RawMaterialServiceTest {
     void testFindById() {
         RawMaterial material = new RawMaterial();
         material.setId(1L);
+        material.setCode("WATER");
         when(rawMaterialRepository.findById(1L)).thenReturn(Optional.of(material));
 
         RawMaterialDTO result = rawMaterialService.findById(1L);
 
         assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getCode()).isEqualTo("WATER");
     }
 
     @Test
     @DisplayName("Should save a raw material from DTO")
     void testSave() {
         RawMaterial material = new RawMaterial();
+        material.setCode("SUGAR");
         material.setName("Sugar");
         when(rawMaterialRepository.save(any(RawMaterial.class))).thenReturn(material);
 
-        RawMaterialDTO dto = RawMaterialDTO.builder().name("Sugar").build();
+        RawMaterialDTO dto = RawMaterialDTO.builder().code("SUGAR").name("Sugar").build();
         RawMaterialDTO result = rawMaterialService.save(dto);
 
         assertThat(result.getName()).isEqualTo("Sugar");
+        assertThat(result.getCode()).isEqualTo("SUGAR");
         verify(rawMaterialRepository, times(1)).save(any(RawMaterial.class));
     }
 
@@ -73,14 +79,20 @@ class RawMaterialServiceTest {
         existing.setId(1L);
         existing.setName("Old Material");
 
-        RawMaterialDTO updatedDTO = RawMaterialDTO.builder().name("New Material").build();
+        RawMaterialDTO updatedDTO = RawMaterialDTO.builder().code("NEW_MAT").name("New Material").build();
 
         when(rawMaterialRepository.findById(1L)).thenReturn(Optional.of(existing));
-        when(rawMaterialRepository.save(any(RawMaterial.class))).thenReturn(existing);
+
+        RawMaterial updated = new RawMaterial();
+        updated.setId(1L);
+        updated.setCode("NEW_MAT");
+        updated.setName("New Material");
+        when(rawMaterialRepository.save(any(RawMaterial.class))).thenReturn(updated);
 
         RawMaterialDTO result = rawMaterialService.update(1L, updatedDTO);
 
         assertThat(result.getName()).isEqualTo("New Material");
+        assertThat(result.getCode()).isEqualTo("NEW_MAT");
         verify(rawMaterialRepository, times(1)).save(existing);
     }
 

@@ -26,6 +26,7 @@ class ProductTransactionRepositoryTest {
     @DisplayName("Should find transactions by Product")
     void testFindByProduct() {
         Product product = new Product();
+        product.setCode("P_SOLD");
         product.setName("Sold Product");
         product.setPrice(new BigDecimal("150.00"));
         productRepository.save(product);

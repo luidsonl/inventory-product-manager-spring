@@ -37,6 +37,7 @@ class RawMaterialControllerTest {
     void testFindAll() throws Exception {
         RawMaterialDTO dto = RawMaterialDTO.builder()
                 .id(1L)
+                .code("RM001")
                 .name("Sugar")
                 .description("Table sugar")
                 .unit(MeasureUnitsType.KILOGRAM)
@@ -49,7 +50,7 @@ class RawMaterialControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("""
                         [
-                            {"id": 1, "name": "Sugar", "unit": "KILOGRAM", "fractionable": true}
+                            {"id": 1, "code": "RM001", "name": "Sugar", "unit": "KILOGRAM", "fractionable": true}
                         ]
                         """));
 
@@ -59,13 +60,14 @@ class RawMaterialControllerTest {
     @Test
     @DisplayName("Should return raw material by id")
     void testFindById() throws Exception {
-        RawMaterialDTO dto = RawMaterialDTO.builder().id(1L).name("Water").unit(MeasureUnitsType.LITER).build();
+        RawMaterialDTO dto = RawMaterialDTO.builder().id(1L).code("WATER").name("Water").unit(MeasureUnitsType.LITER)
+                .build();
         when(rawMaterialService.findById(1L)).thenReturn(dto);
 
         mockMvc.perform(get("/api/raw-materials/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("""
-                        {"name": "Water", "unit": "LITER"}
+                        {"code": "WATER", "name": "Water", "unit": "LITER"}
                         """));
 
         verify(rawMaterialService).findById(1L);
@@ -74,18 +76,19 @@ class RawMaterialControllerTest {
     @Test
     @DisplayName("Should create raw material and verify payload mapping")
     void testSave() throws Exception {
-        RawMaterialDTO savedDTO = RawMaterialDTO.builder().id(5L).name("Salt").build();
+        RawMaterialDTO savedDTO = RawMaterialDTO.builder().id(5L).code("SALT").name("Salt").build();
         when(rawMaterialService.save(any(RawMaterialDTO.class))).thenReturn(savedDTO);
 
         mockMvc.perform(post("/api/raw-materials")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"Salt\", \"unit\": \"GRAM\", \"fractionable\": false}"))
+                .content("{\"code\": \"SALT\", \"name\":\"Salt\", \"unit\": \"GRAM\", \"fractionable\": false}"))
                 .andExpect(status().isCreated())
-                .andExpect(content().json("{\"id\": 5, \"name\": \"Salt\"}"));
+                .andExpect(content().json("{\"id\": 5, \"code\": \"SALT\", \"name\": \"Salt\"}"));
 
         ArgumentCaptor<RawMaterialDTO> captor = ArgumentCaptor.forClass(RawMaterialDTO.class);
         verify(rawMaterialService).save(captor.capture());
 
+        assertThat(captor.getValue().getCode()).isEqualTo("SALT");
         assertThat(captor.getValue().getName()).isEqualTo("Salt");
         assertThat(captor.getValue().getUnit()).isEqualTo(MeasureUnitsType.GRAM);
     }
@@ -108,14 +111,14 @@ class RawMaterialControllerTest {
     @Test
     @DisplayName("Should update raw material and verify parameters")
     void testUpdate() throws Exception {
-        RawMaterialDTO responseDTO = RawMaterialDTO.builder().id(1L).name("Updated Salt").build();
+        RawMaterialDTO responseDTO = RawMaterialDTO.builder().id(1L).code("U_SALT").name("Updated Salt").build();
         when(rawMaterialService.update(eq(1L), any(RawMaterialDTO.class))).thenReturn(responseDTO);
 
         mockMvc.perform(put("/api/raw-materials/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Updated Salt\", \"fractionable\": true}"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"name\": \"Updated Salt\"}"));
+                .andExpect(content().json("{\"code\": \"U_SALT\", \"name\": \"Updated Salt\"}"));
 
         verify(rawMaterialService).update(eq(1L), any(RawMaterialDTO.class));
     }

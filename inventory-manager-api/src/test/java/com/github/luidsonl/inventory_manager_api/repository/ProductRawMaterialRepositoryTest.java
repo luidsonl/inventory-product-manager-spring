@@ -30,11 +30,13 @@ class ProductRawMaterialRepositoryTest {
     @DisplayName("Should find ProductRawMaterial by Product")
     void testFindByProduct() {
         Product product = new Product();
+        product.setCode("PA");
         product.setName("Product A");
         product.setPrice(BigDecimal.ONE);
         productRepository.save(product);
 
         RawMaterial rawMaterial = new RawMaterial();
+        rawMaterial.setCode("MA");
         rawMaterial.setName("Material A");
         rawMaterial.setUnit(MeasureUnitsType.KILOGRAM);
         rawMaterialRepository.save(rawMaterial);
@@ -55,11 +57,13 @@ class ProductRawMaterialRepositoryTest {
     @DisplayName("Should find ProductRawMaterial by RawMaterial")
     void testFindByRawMaterial() {
         Product product = new Product();
+        product.setCode("PB");
         product.setName("Product B");
         product.setPrice(BigDecimal.TEN);
         productRepository.save(product);
 
         RawMaterial rawMaterial = new RawMaterial();
+        rawMaterial.setCode("MB");
         rawMaterial.setName("Material B");
         rawMaterial.setUnit(MeasureUnitsType.LITER);
         rawMaterialRepository.save(rawMaterial);

@@ -43,12 +43,14 @@ class ProductServiceTest {
     @DisplayName("Should return all products as DTOs")
     void testFindAll() {
         Product product = new Product();
+        product.setCode("P001");
         product.setName("Test Product");
         when(productRepository.findAll()).thenReturn(Collections.singletonList(product));
 
         List<ProductDTO> result = productService.findAll();
 
         assertThat(result).hasSize(1);
+        assertThat(result.get(0).getCode()).isEqualTo("P001");
         assertThat(result.get(0).getName()).isEqualTo("Test Product");
     }
 
@@ -57,24 +59,28 @@ class ProductServiceTest {
     void testFindById() {
         Product product = new Product();
         product.setId(1L);
+        product.setCode("P001");
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
         ProductDTO result = productService.findById(1L);
 
         assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getCode()).isEqualTo("P001");
     }
 
     @Test
     @DisplayName("Should save a product from DTO")
     void testSave() {
         Product product = new Product();
+        product.setCode("P001");
         product.setName("New Product");
         when(productRepository.save(any(Product.class))).thenReturn(product);
 
-        ProductDTO dto = ProductDTO.builder().name("New Product").build();
+        ProductDTO dto = ProductDTO.builder().code("P001").name("New Product").build();
         ProductDTO result = productService.save(dto);
 
         assertThat(result.getName()).isEqualTo("New Product");
+        assertThat(result.getCode()).isEqualTo("P001");
         verify(productRepository, times(1)).save(any(Product.class));
     }
 
@@ -85,14 +91,20 @@ class ProductServiceTest {
         existing.setId(1L);
         existing.setName("Old Name");
 
-        ProductDTO updatedDTO = ProductDTO.builder().name("New Name").build();
+        ProductDTO updatedDTO = ProductDTO.builder().code("P_NEW").name("New Name").build();
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(existing));
-        when(productRepository.save(any(Product.class))).thenReturn(existing);
+
+        Product updated = new Product();
+        updated.setId(1L);
+        updated.setCode("P_NEW");
+        updated.setName("New Name");
+        when(productRepository.save(any(Product.class))).thenReturn(updated);
 
         ProductDTO result = productService.update(1L, updatedDTO);
 
         assertThat(result.getName()).isEqualTo("New Name");
+        assertThat(result.getCode()).isEqualTo("P_NEW");
         verify(productRepository, times(1)).save(existing);
     }
 

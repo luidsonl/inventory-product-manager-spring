@@ -26,6 +26,7 @@ class RawMaterialPackagingRepositoryTest {
     @DisplayName("Should find packaging by RawMaterial entity")
     void testFindByRawMaterial() {
         RawMaterial rawMaterial = new RawMaterial();
+        rawMaterial.setCode("MILK_001");
         rawMaterial.setName("Milk");
         rawMaterial.setUnit(MeasureUnitsType.LITER);
         rawMaterialRepository.save(rawMaterial);
@@ -47,6 +48,7 @@ class RawMaterialPackagingRepositoryTest {
     @DisplayName("Should find packaging by RawMaterial ID")
     void testFindByRawMaterialId() {
         RawMaterial rawMaterial = new RawMaterial();
+        rawMaterial.setCode("SUGAR_001");
         rawMaterial.setName("Sugar");
         rawMaterial.setUnit(MeasureUnitsType.KILOGRAM);
         rawMaterialRepository.save(rawMaterial);

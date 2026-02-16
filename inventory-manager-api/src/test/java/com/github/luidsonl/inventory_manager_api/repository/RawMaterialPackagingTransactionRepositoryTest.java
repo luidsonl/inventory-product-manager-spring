@@ -31,6 +31,7 @@ class RawMaterialPackagingTransactionRepositoryTest {
     @DisplayName("Should find transactions by Packaging")
     void testFindByPackaging() {
         RawMaterial rawMaterial = new RawMaterial();
+        rawMaterial.setCode("GRAIN_01");
         rawMaterial.setName("Grain");
         rawMaterial.setUnit(MeasureUnitsType.KILOGRAM);
         rawMaterialRepository.save(rawMaterial);
