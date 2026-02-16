@@ -1,0 +1,776 @@
+openapi: 3.1.0
+info:
+  title: Inventory & Production Manager API
+  description: "API for managing products, raw materials and production suggestions."
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+tags:
+- name: Raw Material
+  description: Endpoints for managing inventory raw materials
+- name: Product
+  description: Endpoints for managing products and their raw material associations
+- name: Production
+  description: Endpoints for production suggestions and analysis
+- name: Product Transaction
+  description: Endpoints for managing stock movements of products
+- name: Packaging Transaction
+  description: Endpoints for managing stock movements of raw material packagings
+- name: Packaging
+  description: Endpoints for managing raw material packaging and stock
+paths:
+  /api/raw-materials/{id}:
+    get:
+      tags:
+      - Raw Material
+      summary: Find a raw material by its ID
+      operationId: findById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RawMaterialDTO"
+    put:
+      tags:
+      - Raw Material
+      summary: Update an existing raw material
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RawMaterialDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RawMaterialDTO"
+    delete:
+      tags:
+      - Raw Material
+      summary: Delete a raw material by its ID
+      operationId: deleteById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /api/products/{id}:
+    get:
+      tags:
+      - Product
+      summary: Find a product by its ID
+      operationId: findById_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductDTO"
+    put:
+      tags:
+      - Product
+      summary: Update an existing product
+      operationId: update_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductDTO"
+    delete:
+      tags:
+      - Product
+      summary: Delete a product by its ID
+      operationId: deleteById_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /api/packaging/{id}:
+    get:
+      tags:
+      - Packaging
+      summary: Find a packaging item by its ID
+      operationId: findById_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RawMaterialPackagingDTO"
+    put:
+      tags:
+      - Packaging
+      summary: Update an existing packaging item
+      operationId: update_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RawMaterialPackagingDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RawMaterialPackagingDTO"
+    delete:
+      tags:
+      - Packaging
+      summary: Delete a packaging item by its ID
+      operationId: deleteById_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /api/raw-materials:
+    get:
+      tags:
+      - Raw Material
+      summary: Find all raw materials
+      operationId: findAll
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RawMaterialDTO"
+    post:
+      tags:
+      - Raw Material
+      summary: Create a new raw material
+      operationId: save
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RawMaterialDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RawMaterialDTO"
+  /api/products:
+    get:
+      tags:
+      - Product
+      summary: Find all products
+      operationId: findAll_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProductDTO"
+    post:
+      tags:
+      - Product
+      summary: Create a new product
+      operationId: save_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductDTO"
+  /api/products/{id}/raw-materials:
+    post:
+      tags:
+      - Product
+      summary: Associate a raw material with a product
+      operationId: addRawMaterial
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: rawMaterialId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: quantity
+        in: query
+        required: true
+        schema:
+          type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductRawMaterialDTO"
+  /api/production/execute:
+    post:
+      tags:
+      - Production
+      summary: "Execute a production process, recording all transactions"
+      operationId: execute
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductionExecutionDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /api/product-transactions:
+    get:
+      tags:
+      - Product Transaction
+      summary: Find all product transactions
+      operationId: findAll_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProductTransactionDTO"
+    post:
+      tags:
+      - Product Transaction
+      summary: Record a new product transaction and update stock
+      operationId: save_2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductTransactionDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductTransactionDTO"
+  /api/packaging:
+    get:
+      tags:
+      - Packaging
+      summary: Find all packaging items
+      operationId: findAll_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RawMaterialPackagingDTO"
+    post:
+      tags:
+      - Packaging
+      summary: Create a new packaging item
+      operationId: save_3
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RawMaterialPackagingDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RawMaterialPackagingDTO"
+  /api/packaging-transactions:
+    get:
+      tags:
+      - Packaging Transaction
+      summary: Find all packaging transactions
+      operationId: findAll_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RawMaterialPackagingTransactionDTO"
+    post:
+      tags:
+      - Packaging Transaction
+      summary: Record a new packaging transaction and update stock
+      operationId: save_4
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RawMaterialPackagingTransactionDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RawMaterialPackagingTransactionDTO"
+  /api/raw-materials/code/{code}:
+    get:
+      tags:
+      - Raw Material
+      summary: Find a raw material by its code
+      operationId: findByCode
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RawMaterialDTO"
+  /api/products/code/{code}:
+    get:
+      tags:
+      - Product
+      summary: Find a product by its code
+      operationId: findByCode_1
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductDTO"
+  /api/production/suggest:
+    get:
+      tags:
+      - Production
+      summary: Get production suggestions based on current stock levels
+      operationId: suggest
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProductionSuggestionDTO"
+  /api/production/requirements:
+    get:
+      tags:
+      - Production
+      summary: Get material requirements for a specific product and quantity
+      operationId: getRequirements
+      parameters:
+      - name: productId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: quantity
+        in: query
+        required: true
+        schema:
+          type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MaterialRequirementDTO"
+  /api/product-transactions/product/{productId}:
+    get:
+      tags:
+      - Product Transaction
+      summary: Find transactions for a specific product
+      operationId: findByProduct
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProductTransactionDTO"
+  /api/packaging/raw-material/{rawMaterialId}:
+    get:
+      tags:
+      - Packaging
+      summary: Find all packaging items associated with a specific raw material
+      operationId: findByRawMaterialId
+      parameters:
+      - name: rawMaterialId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RawMaterialPackagingDTO"
+  /api/packaging-transactions/packaging/{packagingId}:
+    get:
+      tags:
+      - Packaging Transaction
+      summary: Find transactions for a specific packaging
+      operationId: findByPackaging
+      parameters:
+      - name: packagingId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RawMaterialPackagingTransactionDTO"
+  /api/products/raw-materials/{associationId}:
+    delete:
+      tags:
+      - Product
+      summary: Remove a raw material association from a product
+      operationId: removeRawMaterial
+      parameters:
+      - name: associationId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    RawMaterialDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        unit:
+          type: string
+          enum:
+          - MILLIGRAM
+          - GRAM
+          - KILOGRAM
+          - TON
+          - MILLILITER
+          - LITER
+          - UNIT
+          - PIECE
+          - BOX
+          - PACK
+          - DOZEN
+        fractionable:
+          type: boolean
+    ProductDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        code:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        fractionable:
+          type: boolean
+        rawMaterials:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductRawMaterialDTO"
+    ProductRawMaterialDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        rawMaterialId:
+          type: integer
+          format: int64
+        rawMaterialName:
+          type: string
+        quantityNeeded:
+          type: number
+    RawMaterialPackagingDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        rawMaterialId:
+          type: integer
+          format: int64
+        quantityInside:
+          type: number
+        currentStock:
+          type: integer
+          format: int32
+    ConsumedMaterialInputDTO:
+      type: object
+      properties:
+        packagingId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+    ProducedProductInputDTO:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+        quantity:
+          type: number
+    ProductionExecutionDTO:
+      type: object
+      properties:
+        producedProducts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProducedProductInputDTO"
+        consumedMaterials:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConsumedMaterialInputDTO"
+        note:
+          type: string
+    ProductTransactionDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        productId:
+          type: integer
+          format: int64
+        productName:
+          type: string
+        quantity:
+          type: number
+        type:
+          type: string
+          enum:
+          - INVENTORY_IN
+          - INVENTORY_OUT
+          - ADJUSTMENT
+        transactionDate:
+          type: string
+          format: date-time
+        note:
+          type: string
+    RawMaterialPackagingTransactionDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        packagingId:
+          type: integer
+          format: int64
+        packagingName:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+        type:
+          type: string
+          enum:
+          - INVENTORY_IN
+          - INVENTORY_OUT
+          - ADJUSTMENT
+        transactionDate:
+          type: string
+          format: date-time
+        note:
+          type: string
+    ProductionSuggestionDTO:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/SuggestedProductDTO"
+        grandTotalValue:
+          type: number
+    SuggestedProductDTO:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+        productName:
+          type: string
+        quantityToProduce:
+          type: number
+        unitPrice:
+          type: number
+        totalPrice:
+          type: number
+    MaterialItemDTO:
+      type: object
+      properties:
+        rawMaterialId:
+          type: integer
+          format: int64
+        rawMaterialName:
+          type: string
+        totalNeededQuantity:
+          type: number
+        unit:
+          type: string
+    MaterialRequirementDTO:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+        productName:
+          type: string
+        productionQuantity:
+          type: number
+        materials:
+          type: array
+          items:
+            $ref: "#/components/schemas/MaterialItemDTO"
