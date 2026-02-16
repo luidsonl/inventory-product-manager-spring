@@ -1,6 +1,7 @@
 package com.github.luidsonl.inventory_manager_api.service;
 
 import com.github.luidsonl.inventory_manager_api.dto.RawMaterialDTO;
+import com.github.luidsonl.inventory_manager_api.exception.ResourceNotFoundException;
 import com.github.luidsonl.inventory_manager_api.model.RawMaterial;
 import com.github.luidsonl.inventory_manager_api.repository.RawMaterialRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class RawMaterialService {
 
     public RawMaterialDTO findById(Long id) {
         RawMaterial rawMaterial = rawMaterialRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Raw Material not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Raw Material not found with id: " + id));
         return convertToDTO(rawMaterial);
     }
 
@@ -38,7 +39,7 @@ public class RawMaterialService {
     @Transactional
     public RawMaterialDTO update(Long id, RawMaterialDTO rawMaterialDTO) {
         RawMaterial existing = rawMaterialRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Raw Material not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Raw Material not found with id: " + id));
 
         existing.setName(rawMaterialDTO.getName());
         existing.setDescription(rawMaterialDTO.getDescription());

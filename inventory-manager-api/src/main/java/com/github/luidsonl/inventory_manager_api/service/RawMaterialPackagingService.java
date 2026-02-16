@@ -1,6 +1,7 @@
 package com.github.luidsonl.inventory_manager_api.service;
 
 import com.github.luidsonl.inventory_manager_api.dto.RawMaterialPackagingDTO;
+import com.github.luidsonl.inventory_manager_api.exception.ResourceNotFoundException;
 import com.github.luidsonl.inventory_manager_api.model.RawMaterial;
 import com.github.luidsonl.inventory_manager_api.model.RawMaterialPackaging;
 import com.github.luidsonl.inventory_manager_api.repository.RawMaterialPackagingRepository;
@@ -27,7 +28,7 @@ public class RawMaterialPackagingService {
 
     public RawMaterialPackagingDTO findById(Long id) {
         RawMaterialPackaging packaging = packagingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Packaging not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Packaging not found with id: " + id));
         return convertToDTO(packaging);
     }
 
@@ -41,7 +42,7 @@ public class RawMaterialPackagingService {
     @Transactional
     public RawMaterialPackagingDTO update(Long id, RawMaterialPackagingDTO dto) {
         RawMaterialPackaging existing = packagingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Packaging not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Packaging not found with id: " + id));
 
         existing.setName(dto.getName());
         existing.setQuantityInside(dto.getQuantityInside());
@@ -50,7 +51,8 @@ public class RawMaterialPackagingService {
         if (dto.getRawMaterialId() != null) {
             RawMaterial rawMaterial = rawMaterialRepository.findById(dto.getRawMaterialId())
                     .orElseThrow(
-                            () -> new RuntimeException("Raw Material not found with id: " + dto.getRawMaterialId()));
+                            () -> new ResourceNotFoundException(
+                                    "Raw Material not found with id: " + dto.getRawMaterialId()));
             existing.setRawMaterial(rawMaterial);
         }
 
@@ -89,7 +91,8 @@ public class RawMaterialPackagingService {
         if (dto.getRawMaterialId() != null) {
             RawMaterial rawMaterial = rawMaterialRepository.findById(dto.getRawMaterialId())
                     .orElseThrow(
-                            () -> new RuntimeException("Raw Material not found with id: " + dto.getRawMaterialId()));
+                            () -> new ResourceNotFoundException(
+                                    "Raw Material not found with id: " + dto.getRawMaterialId()));
             entity.setRawMaterial(rawMaterial);
         }
 

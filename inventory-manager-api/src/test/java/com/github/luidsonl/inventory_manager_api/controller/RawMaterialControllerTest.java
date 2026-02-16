@@ -2,6 +2,7 @@ package com.github.luidsonl.inventory_manager_api.controller;
 
 import com.github.luidsonl.inventory_manager_api.dto.RawMaterialDTO;
 import com.github.luidsonl.inventory_manager_api.enums.MeasureUnitsType;
+import com.github.luidsonl.inventory_manager_api.exception.ResourceNotFoundException;
 import com.github.luidsonl.inventory_manager_api.service.RawMaterialService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -111,5 +112,18 @@ class RawMaterialControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(rawMaterialService).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("Should return 404 when raw material not found")
+    void testFindByIdNotFound() throws Exception {
+        when(rawMaterialService.findById(99L))
+                .thenThrow(new ResourceNotFoundException("Raw Material not found with id: 99"));
+
+        mockMvc.perform(get("/api/raw-materials/99"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Raw Material not found with id: 99"));
+
+        verify(rawMaterialService).findById(99L);
     }
 }

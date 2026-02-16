@@ -1,6 +1,7 @@
 package com.github.luidsonl.inventory_manager_api.controller;
 
 import com.github.luidsonl.inventory_manager_api.dto.RawMaterialPackagingDTO;
+import com.github.luidsonl.inventory_manager_api.exception.ResourceNotFoundException;
 import com.github.luidsonl.inventory_manager_api.service.RawMaterialPackagingService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -93,5 +94,18 @@ class RawMaterialPackagingControllerTest {
                                 .andExpect(status().isNoContent());
 
                 verify(packagingService).deleteById(1L);
+        }
+
+        @Test
+        @DisplayName("Should return 404 when packaging not found")
+        void testFindByIdNotFound() throws Exception {
+                when(packagingService.findById(99L))
+                                .thenThrow(new ResourceNotFoundException("Packaging not found with id: 99"));
+
+                mockMvc.perform(get("/api/packaging/99"))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.message").value("Packaging not found with id: 99"));
+
+                verify(packagingService).findById(99L);
         }
 }

@@ -2,6 +2,7 @@ package com.github.luidsonl.inventory_manager_api.service;
 
 import com.github.luidsonl.inventory_manager_api.dto.ProductDTO;
 import com.github.luidsonl.inventory_manager_api.dto.ProductRawMaterialDTO;
+import com.github.luidsonl.inventory_manager_api.exception.ResourceNotFoundException;
 import com.github.luidsonl.inventory_manager_api.model.Product;
 import com.github.luidsonl.inventory_manager_api.model.ProductRawMaterial;
 import com.github.luidsonl.inventory_manager_api.model.RawMaterial;
@@ -33,7 +34,7 @@ public class ProductService {
 
     public ProductDTO findById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         return convertToDTO(product);
     }
 
@@ -47,7 +48,7 @@ public class ProductService {
     @Transactional
     public ProductDTO update(Long id, ProductDTO dto) {
         Product existing = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
 
         existing.setName(dto.getName());
         existing.setPrice(dto.getPrice());
@@ -65,9 +66,9 @@ public class ProductService {
     @Transactional
     public ProductRawMaterialDTO addRawMaterial(Long productId, Long rawMaterialId, BigDecimal quantity) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
         RawMaterial rawMaterial = rawMaterialRepository.findById(rawMaterialId)
-                .orElseThrow(() -> new RuntimeException("Raw Material not found with id: " + rawMaterialId));
+                .orElseThrow(() -> new ResourceNotFoundException("Raw Material not found with id: " + rawMaterialId));
 
         ProductRawMaterial association = new ProductRawMaterial();
         association.setProduct(product);

@@ -2,6 +2,7 @@ package com.github.luidsonl.inventory_manager_api.controller;
 
 import com.github.luidsonl.inventory_manager_api.dto.ProductDTO;
 import com.github.luidsonl.inventory_manager_api.dto.ProductRawMaterialDTO;
+import com.github.luidsonl.inventory_manager_api.exception.ResourceNotFoundException;
 import com.github.luidsonl.inventory_manager_api.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -176,5 +177,17 @@ class ProductControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(productService).removeRawMaterial(10L);
+    }
+
+    @Test
+    @DisplayName("Should return 404 when product not found")
+    void testFindByIdNotFound() throws Exception {
+        when(productService.findById(99L)).thenThrow(new ResourceNotFoundException("Product not found with id: 99"));
+
+        mockMvc.perform(get("/api/products/99"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Product not found with id: 99"));
+
+        verify(productService).findById(99L);
     }
 }
