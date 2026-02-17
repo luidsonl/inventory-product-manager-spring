@@ -39,6 +39,14 @@ describe('apiService integration', () => {
         expect(created.error).toBeUndefined();
         const raw = created.data as RawMaterialDTO;
         expect(raw.id).toBeDefined();
+        expect(typeof raw.code).toBe('string');
+        expect(typeof raw.name).toBe('string');
+
+        // verify listing contains created raw material
+        const rawList = await store.dispatch(apiService.endpoints.getRawMaterials.initiate(undefined));
+        expect(rawList.error).toBeUndefined();
+        expect(Array.isArray(rawList.data)).toBe(true);
+        expect(rawList.data?.some((r) => r.id === raw.id)).toBe(true);
 
         const byId = await store.dispatch(apiService.endpoints.getRawMaterialById.initiate(raw.id!));
         expect(byId.error).toBeUndefined();
@@ -79,6 +87,14 @@ describe('apiService integration', () => {
         const createdProd = await store.dispatch(apiService.endpoints.createProduct.initiate(newProd));
         expect(createdProd.error).toBeUndefined();
         const prod = createdProd.data as ProductDTO;
+        expect(prod.id).toBeDefined();
+        expect(typeof prod.code).toBe('string');
+
+        // ensure product appears in list
+        const prodList = await store.dispatch(apiService.endpoints.getProducts.initiate(undefined));
+        expect(prodList.error).toBeUndefined();
+        expect(Array.isArray(prodList.data)).toBe(true);
+        expect(prodList.data?.some((p) => p.id === prod.id)).toBe(true);
 
         const addAssoc = await store.dispatch(
             apiService.endpoints.addRawMaterialToProduct.initiate({ productId: prod.id!, rawMaterialId: raw.id!, quantity: 1 })
@@ -86,6 +102,8 @@ describe('apiService integration', () => {
         expect(addAssoc.error).toBeUndefined();
         const assoc = addAssoc.data as ProductRawMaterialDTO;
         expect(assoc.id).toBeDefined();
+        // quantity field may be named differently depending on backend - check at least one numeric property
+        expect(typeof assoc.quantityNeeded === 'number' || typeof (assoc as any).quantity === 'number').toBe(true);
 
         const removeAssoc = await store.dispatch(apiService.endpoints.removeRawMaterialFromProduct.initiate(assoc.id!));
         expect(removeAssoc.error).toBeUndefined();
@@ -125,6 +143,13 @@ describe('apiService integration', () => {
         const createdPack = await store.dispatch(apiService.endpoints.createPackaging.initiate(newPack));
         expect(createdPack.error).toBeUndefined();
         const pack = createdPack.data as RawMaterialPackagingDTO;
+        expect(pack.id).toBeDefined();
+
+        // ensure packaging appears in list
+        const packList = await store.dispatch(apiService.endpoints.getPackagings.initiate(undefined));
+        expect(packList.error).toBeUndefined();
+        expect(Array.isArray(packList.data)).toBe(true);
+        expect(packList.data?.some((p) => p.id === pack.id)).toBe(true);
 
         const byId = await store.dispatch(apiService.endpoints.getPackagingById.initiate(pack.id!));
         expect(byId.error).toBeUndefined();
@@ -132,6 +157,7 @@ describe('apiService integration', () => {
 
         const byRaw = await store.dispatch(apiService.endpoints.getPackagingsByRawMaterial.initiate(raw.id!));
         expect(byRaw.error).toBeUndefined();
+        expect(Array.isArray(byRaw.data)).toBe(true);
 
         const updated = await store.dispatch(
             apiService.endpoints.updatePackaging.initiate({ id: pack.id!, body: { ...pack, name: 'Pack Updated' } })
@@ -184,19 +210,30 @@ describe('apiService integration', () => {
             apiService.endpoints.createProductTransaction.initiate({ productId: prod.id!, quantity: 1, type: 'INVENTORY_IN' } as any)
         );
         expect(prodTx.error).toBeUndefined();
+        // verify transaction appears for product
+        const prodTxs = await store.dispatch(apiService.endpoints.getProductTransactionsByProduct.initiate(prod.id!));
+        expect(prodTxs.error).toBeUndefined();
+        expect(Array.isArray(prodTxs.data)).toBe(true);
+        expect(prodTxs.data?.some((t) => t.productId === prod.id)).toBe(true);
 
         // Packaging transaction
         const packTx = await store.dispatch(
             apiService.endpoints.createPackagingTransaction.initiate({ packagingId: pack.id!, quantity: 1, type: 'INVENTORY_IN' } as any)
         );
         expect(packTx.error).toBeUndefined();
+        const packTxs = await store.dispatch(apiService.endpoints.getPackagingTransactionsByPackaging.initiate(pack.id!));
+        expect(packTxs.error).toBeUndefined();
+        expect(Array.isArray(packTxs.data)).toBe(true);
+        expect(packTxs.data?.some((t) => t.packagingId === pack.id)).toBe(true);
 
         // Production suggestions and requirements
         const suggestions = await store.dispatch(apiService.endpoints.getProductionSuggestions.initiate(undefined));
         expect(suggestions.error).toBeUndefined();
+        expect(suggestions.data).toBeDefined();
 
         const requirements = await store.dispatch(apiService.endpoints.getProductionRequirements.initiate({ productId: prod.id!, quantity: 1 }));
         expect(requirements.error).toBeUndefined();
+        expect(requirements.data).toBeDefined();
 
         // execute production (best-effort - may fail if backend enforces business rules)
         const execBody: ProductionExecutionDTO = {
@@ -205,8 +242,16 @@ describe('apiService integration', () => {
         } as any;
 
         const exec = await store.dispatch(apiService.endpoints.executeProduction.initiate(execBody));
-        // Accept either success or a business-rule error (so just ensure request reached server)
+        // Prefer success; accept either a requestStatus in meta or presence of data/error
         expect(exec).toBeDefined();
+        const status = (exec as any)?.meta?.requestStatus as string | undefined;
+        if (status) {
+            expect(['fulfilled', 'rejected']).toContain(status);
+        } else {
+            // Some RTK Query configurations may return an empty result object;
+            // accept the dispatch having returned a defined value.
+            expect(exec).toBeDefined();
+        }
 
         // cleanup
         await store.dispatch(apiService.endpoints.deleteProduct.initiate(prod.id!));
