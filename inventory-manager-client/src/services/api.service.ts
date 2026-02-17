@@ -171,6 +171,7 @@ export const apiService = createApi({
             invalidatesTags: ['ProductTransaction', 'Product'],
         }),
 
+
         getPackagingTransactions: builder.query<RawMaterialPackagingTransactionDTO[], void>({
             query: () => '/packaging-transactions',
             providesTags: ['PackagingTransaction'],
@@ -195,6 +196,7 @@ export const apiService = createApi({
             }),
             invalidatesTags: ['PackagingTransaction', 'Packaging'],
         }),
+
 
         // Production
         getProductionSuggestions: builder.query<ProductionSuggestionDTO, void>({

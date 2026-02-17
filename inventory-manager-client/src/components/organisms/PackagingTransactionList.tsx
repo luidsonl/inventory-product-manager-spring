@@ -1,8 +1,9 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGetPackagingTransactionsQuery } from '../../services/api.service';
 import { PackagingTransactionCard } from '../molecules/PackagingTransactionCard';
 
 export const PackagingTransactionList: React.FC = () => {
+    const navigate = useNavigate();
     const { data, isLoading, error } = useGetPackagingTransactionsQuery();
 
     if (isLoading) return <div>Loading...</div>;
@@ -11,7 +12,11 @@ export const PackagingTransactionList: React.FC = () => {
     return (
         <div className="grid gap-3">
             {data?.map((tx) => (
-                <PackagingTransactionCard key={tx.id} transaction={tx} />
+                <PackagingTransactionCard
+                    key={tx.id}
+                    transaction={tx}
+                    onClick={() => navigate(`/transactions/packaging/${tx.id}`)}
+                />
             ))}
         </div>
     );
