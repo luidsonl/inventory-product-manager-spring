@@ -12,8 +12,10 @@ export const RawMaterialList: React.FC = () => {
         <div>
             {data?.map((r) => (
                 <Card key={r.id}>
-                    <div>{r.code} - {r.name}</div>
+                    <div><strong>{r.code}</strong> - {r.name}</div>
+                    {r.description && <div className="text-sm italic">{r.description}</div>}
                     <div>Unit: {r.unit}</div>
+                    <div>Fractionable: {r.fractionable ? 'Yes' : 'No'}</div>
                 </Card>
             ))}
         </div>

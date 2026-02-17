@@ -10,17 +10,18 @@ export const ProductionPage: React.FC = () => {
     const { data: suggestions, isLoading: suggestionsLoading } = useGetProductionSuggestionsQuery();
     const { data: products } = useGetProductsQuery();
     const { data: packagings } = useGetPackagingsQuery();
-    
+
     const [selectedProductId, setSelectedProductId] = useState<number | ''>('');
     const [selectedQuantity, setSelectedQuantity] = useState(0);
     const { data: requirements } = useGetProductionRequirementsQuery(
         { productId: selectedProductId as number, quantity: selectedQuantity },
         { skip: !selectedProductId || selectedQuantity <= 0 }
     );
-    
+
     const [executeProduction] = useExecuteProductionMutation();
     const [producedProducts, setProducedProducts] = useState<{ productId: number; quantity: number }[]>([]);
     const [consumedMaterials, setConsumedMaterials] = useState<{ packagingId: number; quantity: number }[]>([]);
+    const [note, setNote] = useState('');
 
     const handleAddProducedProduct = () => {
         if (selectedProductId) {
@@ -39,16 +40,18 @@ export const ProductionPage: React.FC = () => {
         const execBody: ProductionExecutionDTO = {
             producedProducts,
             consumedMaterials,
+            note: note || undefined,
         };
         await executeProduction(execBody);
         setProducedProducts([]);
         setConsumedMaterials([]);
+        setNote('');
     };
 
     return (
         <MainLayout >
             <h1 className="text-2xl mb-4">Production Management</h1>
-            
+
             <div className="grid grid-cols-2 gap-4">
                 {/* Production Suggestions */}
                 <div>
@@ -135,6 +138,8 @@ export const ProductionPage: React.FC = () => {
                                 </div>
                             ))}
                         </div>
+
+                        <Input label="Production Note" value={note} onChange={(e) => setNote(e.target.value)} />
 
                         <div className="flex gap-2">
                             <Button type="submit">Execute Production</Button>

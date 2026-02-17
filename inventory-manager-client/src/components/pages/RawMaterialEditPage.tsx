@@ -10,13 +10,14 @@ export const RawMaterialEditPage: React.FC = () => {
     const navigate = useNavigate();
     const { data: rawMaterial } = useGetRawMaterialByIdQuery(Number(id!), { skip: !id });
     const [updateRawMaterial] = useUpdateRawMaterialMutation();
-    const [formData, setFormData] = useState({ code: '', name: '', unit: 'UNIT', fractionable: false });
+    const [formData, setFormData] = useState({ code: '', name: '', description: '', unit: 'UNIT', fractionable: false });
 
     useEffect(() => {
         if (rawMaterial) {
             setFormData({
                 code: rawMaterial.code || '',
                 name: rawMaterial.name || '',
+                description: rawMaterial.description || '',
                 unit: rawMaterial.unit || 'UNIT',
                 fractionable: rawMaterial.fractionable || false,
             });
@@ -39,7 +40,28 @@ export const RawMaterialEditPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="max-w-md space-y-3">
                 <Input label="Code" name="code" value={formData.code} onChange={handleChange} required />
                 <Input label="Name" name="name" value={formData.name} onChange={handleChange} required />
-                <Input label="Unit" name="unit" value={formData.unit} onChange={handleChange} />
+                <Input label="Description" name="description" value={formData.description} onChange={handleChange} />
+                <div className="mb-3">
+                    <label className="block text-sm">Unit</label>
+                    <select
+                        name="unit"
+                        value={formData.unit}
+                        onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                        className="border p-1 w-full"
+                    >
+                        <option value="MILLIGRAM">Milligram</option>
+                        <option value="GRAM">Gram</option>
+                        <option value="KILOGRAM">Kilogram</option>
+                        <option value="TON">Ton</option>
+                        <option value="MILLILITER">Milliliter</option>
+                        <option value="LITER">Liter</option>
+                        <option value="UNIT">Unit</option>
+                        <option value="PIECE">Piece</option>
+                        <option value="BOX">Box</option>
+                        <option value="PACK">Pack</option>
+                        <option value="DOZEN">Dozen</option>
+                    </select>
+                </div>
                 <label className="flex gap-2">
                     <input type="checkbox" name="fractionable" checked={formData.fractionable} onChange={handleChange} />
                     Fractionable

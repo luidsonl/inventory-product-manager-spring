@@ -8,7 +8,7 @@ import { useCreateRawMaterialMutation } from '../../services/api.service';
 export const RawMaterialsPage: React.FC = () => {
     const [showForm, setShowForm] = useState(false);
     const [createRawMaterial] = useCreateRawMaterialMutation();
-    const [formData, setFormData] = useState({ code: '', name: '', unit: 'UNIT', fractionable: false });
+    const [formData, setFormData] = useState({ code: '', name: '', description: '', unit: 'UNIT', fractionable: false });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.currentTarget;
@@ -18,7 +18,7 @@ export const RawMaterialsPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         await createRawMaterial(formData as any);
-        setFormData({ code: '', name: '', unit: 'UNIT', fractionable: false });
+        setFormData({ code: '', name: '', description: '', unit: 'UNIT', fractionable: false });
         setShowForm(false);
     };
 
@@ -49,11 +49,32 @@ export const RawMaterialsPage: React.FC = () => {
                         required
                     />
                     <Input
-                        label="Unit"
-                        name="unit"
-                        value={formData.unit}
+                        label="Description"
+                        name="description"
+                        value={formData.description}
                         onChange={handleChange}
                     />
+                    <div className="mb-3">
+                        <label className="block text-sm">Unit</label>
+                        <select
+                            name="unit"
+                            value={formData.unit}
+                            onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                            className="border p-1 w-full"
+                        >
+                            <option value="MILLIGRAM">Milligram</option>
+                            <option value="GRAM">Gram</option>
+                            <option value="KILOGRAM">Kilogram</option>
+                            <option value="TON">Ton</option>
+                            <option value="MILLILITER">Milliliter</option>
+                            <option value="LITER">Liter</option>
+                            <option value="UNIT">Unit</option>
+                            <option value="PIECE">Piece</option>
+                            <option value="BOX">Box</option>
+                            <option value="PACK">Pack</option>
+                            <option value="DOZEN">Dozen</option>
+                        </select>
+                    </div>
                     <label className="flex gap-2 mb-3">
                         <input
                             type="checkbox"

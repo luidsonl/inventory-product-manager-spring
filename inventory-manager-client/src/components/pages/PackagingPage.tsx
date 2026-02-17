@@ -8,7 +8,7 @@ export const PackagingPage: React.FC = () => {
     const navigate = useNavigate();
 
     return (
-        <MainLayout title="Packaging">
+        <MainLayout>
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl">Packaging</h1>
                 <Button onClick={() => navigate('/packaging/create')}>Create New</Button>
