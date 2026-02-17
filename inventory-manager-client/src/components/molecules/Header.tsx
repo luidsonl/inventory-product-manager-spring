@@ -10,7 +10,8 @@ export const Header: React.FC<{ title?: string }> = ({ title }) => (
                 <Link to="/raw-materials" className="text-white hover:underline">Raw Materials</Link>
                 <Link to="/products" className="text-white hover:underline">Products</Link>
                 <Link to="/packaging" className="text-white hover:underline">Packaging</Link>
-                <Link to="/transactions" className="text-white hover:underline">Transactions</Link>
+                <Link to="/transactions/products" className="text-white hover:underline">Product Transactions</Link>
+                <Link to="/transactions/packaging" className="text-white hover:underline">Packaging Transactions</Link>
                 <Link to="/production" className="text-white hover:underline">Production</Link>
             </nav>
         </div>

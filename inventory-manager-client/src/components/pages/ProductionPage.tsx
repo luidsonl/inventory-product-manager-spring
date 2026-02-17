@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useGetProductionSuggestionsQuery, useGetProductionRequirementsQuery, useExecuteProductionMutation, useGetProductsQuery, useGetPackagingsQuery } from '../../services/api.service';
+import React, { useState, useEffect } from 'react';
+import { useGetProductionSuggestionsQuery, useExecuteProductionMutation, useGetProductsQuery, useGetPackagingsQuery } from '../../services/api.service';
 import { Input } from '../atoms/Input';
 import { Button } from '../atoms/Button';
 import { MainLayout } from '../templates/MainLayout';
@@ -11,40 +11,52 @@ export const ProductionPage: React.FC = () => {
     const { data: products } = useGetProductsQuery();
     const { data: packagings } = useGetPackagingsQuery();
 
-    const [selectedProductId, setSelectedProductId] = useState<number | ''>('');
-    const [selectedQuantity, setSelectedQuantity] = useState(0);
-    const { data: requirements } = useGetProductionRequirementsQuery(
-        { productId: selectedProductId as number, quantity: selectedQuantity },
-        { skip: !selectedProductId || selectedQuantity <= 0 }
-    );
-
+    const [selectedProductId, setSelectedProductId] = useState<number>(0);
+    const [quantity, setQuantity] = useState<number>(0);
     const [executeProduction] = useExecuteProductionMutation();
-    const [producedProducts, setProducedProducts] = useState<{ productId: number; quantity: number }[]>([]);
-    const [consumedMaterials, setConsumedMaterials] = useState<{ packagingId: number; quantity: number }[]>([]);
+    const [consumedMaterials, setConsumedMaterials] = useState<ProductionExecutionDTO['consumedMaterials']>([]);
     const [note, setNote] = useState('');
 
-    const handleAddProducedProduct = () => {
-        if (selectedProductId) {
-            setProducedProducts([...producedProducts, { productId: selectedProductId as number, quantity: selectedQuantity }]);
-            setSelectedProductId('');
-            setSelectedQuantity(0);
+    const selectedProduct = products?.find(p => p.id === selectedProductId);
+
+    useEffect(() => {
+        if (selectedProduct && quantity > 0 && selectedProduct.rawMaterials) {
+            const requirements = selectedProduct.rawMaterials.map(rm => {
+                const requiredQty = (rm.quantityNeeded || 0) * quantity;
+                // Find best packaging (simplistic: first available)
+                const availablePackaging = packagings?.filter(p => p.rawMaterialId === rm.rawMaterialId) || [];
+                const defaultPackaging = availablePackaging[0];
+                return {
+                    rawMaterialId: rm.rawMaterialId,
+                    rawMaterialName: rm.rawMaterialName,
+                    packagingId: defaultPackaging?.id || 0,
+                    quantity: requiredQty
+                };
+            });
+            setConsumedMaterials(requirements.map(r => ({ packagingId: r.packagingId, quantity: r.quantity })));
+        } else {
+            setConsumedMaterials([]);
         }
+    }, [selectedProductId, quantity, products, packagings]);
+
+    const handleConstraintChange = (index: number, field: 'packagingId' | 'quantity', value: number) => {
+        const newConsumed = [...consumedMaterials];
+        newConsumed[index] = { ...newConsumed[index], [field]: value };
+        setConsumedMaterials(newConsumed);
     };
 
-    const handleAddConsumedMaterial = (packagingId: number, quantity: number) => {
-        setConsumedMaterials([...consumedMaterials, { packagingId, quantity }]);
-    };
-
-    const handleExecuteProduction = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!selectedProductId || quantity <= 0) return;
+
         const execBody: ProductionExecutionDTO = {
-            producedProducts,
+            producedProducts: [{ productId: selectedProductId, quantity }],
             consumedMaterials,
             note: note || undefined,
         };
         await executeProduction(execBody);
-        setProducedProducts([]);
-        setConsumedMaterials([]);
+        setSelectedProductId(0);
+        setQuantity(0);
         setNote('');
     };
 
@@ -74,77 +86,75 @@ export const ProductionPage: React.FC = () => {
                 </div>
 
                 {/* Production Execution Form */}
-                <div>
-                    <h2 className="text-xl mb-3">Execute Production</h2>
-                    <form onSubmit={handleExecuteProduction} className="space-y-3">
-                        <div>
-                            <label className="block text-sm">Select Product</label>
-                            <select
-                                value={selectedProductId}
-                                onChange={(e) => setSelectedProductId(e.target.value ? Number(e.target.value) : '')}
-                                className="border p-1 w-full"
-                            >
-                                <option value="">-- Select --</option>
-                                {products?.map((p) => (
-                                    <option key={p.id} value={p.id}>
-                                        {p.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <Input label="Quantity" type="number" value={selectedQuantity} onChange={(e) => setSelectedQuantity(Number(e.target.value))} />
-                        <Button type="button" onClick={handleAddProducedProduct}>Add to Production</Button>
-
-                        {/* Material Requirements */}
-                        {requirements && (
-                            <div className="mt-4 p-2 border">
-                                <h3 className="font-bold mb-2">Material Requirements</h3>
-                                {requirements.materials?.map((m) => (
-                                    <Card key={m.rawMaterialId}>
-                                        <div className="text-sm">{m.rawMaterialName}: {m.totalNeededQuantity} {m.unit}</div>
-                                    </Card>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Produced Products List */}
-                        {producedProducts.length > 0 && (
-                            <div className="mt-4 p-2 border">
-                                <h3 className="font-bold mb-2">Products to Produce</h3>
-                                {producedProducts.map((p, i) => (
-                                    <div key={i} className="text-sm">{p.productId}: {p.quantity}</div>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Consumed Materials Selection */}
-                        <div className="mt-4 p-2 border">
-                            <h3 className="font-bold mb-2">Select Consumed Materials</h3>
-                            {packagings?.map((pk) => (
-                                <div key={pk.id} className="text-sm mb-2 flex gap-2">
-                                    <span>{pk.name}</span>
-                                    <input
-                                        type="number"
-                                        placeholder="Qty"
-                                        className="border px-1 w-20"
-                                        min={0}
-                                        onChange={(e) => {
-                                            if (e.target.value) {
-                                                handleAddConsumedMaterial(pk.id!, Number(e.target.value));
-                                                e.target.value = '';
-                                            }
-                                        }}
-                                    />
+                <div className="space-y-6">
+                    <section className="p-4 border">
+                        <h2 className="text-xl mb-3 font-semibold">Execute Production</h2>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm">Product to Produce</label>
+                                    <select
+                                        className="border p-1 w-full"
+                                        value={selectedProductId}
+                                        onChange={(e) => setSelectedProductId(Number(e.target.value))}
+                                        required
+                                    >
+                                        <option value="0">-- Select Product --</option>
+                                        {products?.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                    </select>
                                 </div>
-                            ))}
-                        </div>
+                                <Input label="Quantity" type="number" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} required />
+                            </div>
 
-                        <Input label="Production Note" value={note} onChange={(e) => setNote(e.target.value)} />
+                            {selectedProduct && selectedProduct.rawMaterials && selectedProduct.rawMaterials.length > 0 && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">Materials to Consume</h3>
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr>
+                                                <th className="text-left">Raw Material</th>
+                                                <th className="text-left">Packaging Source</th>
+                                                <th className="text-left">Quantity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {selectedProduct.rawMaterials.map((rm, index) => {
+                                                const availablePackaging = packagings?.filter(p => p.rawMaterialId === rm.rawMaterialId);
+                                                return (
+                                                    <tr key={rm.rawMaterialId}>
+                                                        <td>{rm.rawMaterialName}</td>
+                                                        <td>
+                                                            <select
+                                                                className="border p-1 w-full"
+                                                                value={consumedMaterials[index]?.packagingId || 0}
+                                                                onChange={(e) => handleConstraintChange(index, 'packagingId', Number(e.target.value))}
+                                                            >
+                                                                <option value="0">-- Select Stock --</option>
+                                                                {availablePackaging?.map(p => (
+                                                                    <option key={p.id} value={p.id}>{p.name} (Stock: {p.currentStock})</option>
+                                                                ))}
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <Input
+                                                                type="number"
+                                                                value={consumedMaterials[index]?.quantity || 0}
+                                                                onChange={(e) => handleConstraintChange(index, 'quantity', Number(e.target.value))}
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
 
-                        <div className="flex gap-2">
-                            <Button type="submit">Execute Production</Button>
-                        </div>
-                    </form>
+                            <Input label="Production Note" value={note} onChange={(e) => setNote(e.target.value)} />
+
+                            <Button type="submit" disabled={!selectedProductId || quantity <= 0}>Execute Production</Button>
+                        </form>
+                    </section>
                 </div>
             </div>
 

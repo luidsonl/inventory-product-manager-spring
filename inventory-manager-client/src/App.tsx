@@ -8,7 +8,10 @@ import { ProductCreatePage } from './components/pages/ProductCreatePage';
 import { PackagingPage } from './components/pages/PackagingPage';
 import { PackagingEditPage } from './components/pages/PackagingEditPage';
 import { PackagingCreatePage } from './components/pages/PackagingCreatePage';
-import { TransactionsPage } from './components/pages/TransactionsPage';
+import { ProductTransactionsPage } from './components/pages/ProductTransactionsPage';
+import { ProductTransactionCreatePage } from './components/pages/ProductTransactionCreatePage';
+import { PackagingTransactionsPage } from './components/pages/PackagingTransactionsPage';
+import { PackagingTransactionCreatePage } from './components/pages/PackagingTransactionCreatePage';
 import { ProductionPage } from './components/pages/ProductionPage';
 import { HomePage } from './components/pages/HomePage';
 
@@ -25,7 +28,10 @@ function App() {
         <Route path="/packaging" element={<PackagingPage />} />
         <Route path="/packaging/create" element={<PackagingCreatePage />} />
         <Route path="/packaging/:id/edit" element={<PackagingEditPage />} />
-        <Route path="/transactions" element={<TransactionsPage />} />
+        <Route path="/transactions/products" element={<ProductTransactionsPage />} />
+        <Route path="/transactions/products/create" element={<ProductTransactionCreatePage />} />
+        <Route path="/transactions/packaging" element={<PackagingTransactionsPage />} />
+        <Route path="/transactions/packaging/create" element={<PackagingTransactionCreatePage />} />
         <Route path="/production" element={<ProductionPage />} />
       </Routes>
     </BrowserRouter>
