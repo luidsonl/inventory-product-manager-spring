@@ -11,7 +11,7 @@ export const PackagingTransactionList: React.FC = () => {
 
     return (
         <div className="grid gap-3">
-            {data?.map((tx) => (
+            {[...(data || [])].sort((a, b) => (b.id || 0) - (a.id || 0)).map((tx) => (
                 <PackagingTransactionCard
                     key={tx.id}
                     transaction={tx}

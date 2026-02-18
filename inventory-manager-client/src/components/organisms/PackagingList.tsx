@@ -17,7 +17,7 @@ export const PackagingList: React.FC = () => {
 
     return (
         <div className="grid gap-3">
-            {data?.map((packaging) => (
+            {[...(data || [])].sort((a, b) => (b.id || 0) - (a.id || 0)).map((packaging) => (
                 <PackagingCard
                     key={packaging.id}
                     packaging={packaging}

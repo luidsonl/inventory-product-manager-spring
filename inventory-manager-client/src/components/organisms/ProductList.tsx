@@ -17,7 +17,7 @@ export const ProductList: React.FC = () => {
 
     return (
         <div className="grid gap-3">
-            {data?.map((product) => (
+            {[...(data || [])].sort((a, b) => (b.id || 0) - (a.id || 0)).map((product) => (
                 <ProductCard
                     key={product.id}
                     product={product}

@@ -37,40 +37,49 @@ export const RawMaterialEditPage: React.FC = () => {
 
     return (
         <MainLayout>
-            <form onSubmit={handleSubmit} className="max-w-md space-y-3">
-                <Input label="Code" name="code" value={formData.code} onChange={handleChange} required />
-                <Input label="Name" name="name" value={formData.name} onChange={handleChange} required />
-                <Input label="Description" name="description" value={formData.description} onChange={handleChange} />
-                <div className="mb-3">
-                    <label className="block text-sm">Unit</label>
-                    <select
-                        name="unit"
-                        value={formData.unit}
-                        onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                        className="border p-1 w-full"
-                    >
-                        <option value="MILLIGRAM">Milligram</option>
-                        <option value="GRAM">Gram</option>
-                        <option value="KILOGRAM">Kilogram</option>
-                        <option value="TON">Ton</option>
-                        <option value="MILLILITER">Milliliter</option>
-                        <option value="LITER">Liter</option>
-                        <option value="UNIT">Unit</option>
-                        <option value="PIECE">Piece</option>
-                        <option value="BOX">Box</option>
-                        <option value="PACK">Pack</option>
-                        <option value="DOZEN">Dozen</option>
-                    </select>
-                </div>
-                <label className="flex gap-2">
-                    <input type="checkbox" name="fractionable" checked={formData.fractionable} onChange={handleChange} />
-                    Fractionable
-                </label>
-                <div className="flex gap-2">
-                    <Button type="submit">Save</Button>
-                    <Button onClick={() => navigate('/raw-materials')}>Cancel</Button>
-                </div>
-            </form>
+            <div className="max-w-md mx-auto space-y-6">
+                <h1 className="text-2xl font-bold text-slate-800 text-center">Edit Raw Material</h1>
+                <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-sm border border-slate-100">
+                    <Input label="Code" name="code" value={formData.code} onChange={handleChange} required />
+                    <Input label="Name" name="name" value={formData.name} onChange={handleChange} required />
+                    <Input label="Description" name="description" value={formData.description} onChange={handleChange} />
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-sm font-medium text-slate-700">Unit</label>
+                        <select
+                            name="unit"
+                            value={formData.unit}
+                            onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                            className="px-3 py-2 rounded-md border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors outline-none bg-white"
+                        >
+                            <option value="MILLIGRAM">Milligram</option>
+                            <option value="GRAM">Gram</option>
+                            <option value="KILOGRAM">Kilogram</option>
+                            <option value="TON">Ton</option>
+                            <option value="MILLILITER">Milliliter</option>
+                            <option value="LITER">Liter</option>
+                            <option value="UNIT">Unit</option>
+                            <option value="PIECE">Piece</option>
+                            <option value="BOX">Box</option>
+                            <option value="PACK">Pack</option>
+                            <option value="DOZEN">Dozen</option>
+                        </select>
+                    </div>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            name="fractionable"
+                            checked={formData.fractionable}
+                            onChange={handleChange}
+                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm font-medium text-slate-700">Fractionable</span>
+                    </label>
+                    <div className="flex gap-2 justify-end pt-2">
+                        <Button type="button" onClick={() => navigate('/raw-materials')} className="bg-slate-100 text-slate-700 hover:bg-slate-200">Cancel</Button>
+                        <Button type="submit">Save Changes</Button>
+                    </div>
+                </form>
+            </div>
         </MainLayout>
     );
 };
