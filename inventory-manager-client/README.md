@@ -13,13 +13,25 @@ A modern, responsive frontend for the Inventory Manager system, built with **Rea
 
 ## Screenshots
 
-| Raw Materials | Production Screen |
+| Raw Materials List | Raw Materials Create |
 | :---: | :---: |
-| ![Raw Materials](docs/raw-materials-screen.png) | ![Production](docs/production-screen.png) |
+| ![Raw Materials List](docs/raw-materials-list.png) | ![Raw Materials Create](docs/raw-materials-crete.png) |
 
-| Product Transactions | Packaging Creation |
+| Products List | Product Create |
 | :---: | :---: |
-| ![Product Transactions](docs/product-transactions.png) | ![Packaging](docs/package-creation.png) |
+| ![Products List](docs/products-list.png) | ![Product Create](docs/product-new.png) |
+
+| Packaging List | Packaging Create |
+| :---: | :---: |
+| ![Packaging List](docs/packiaging-list.png) | ![Packaging Create](docs/packaging-new.png) |
+
+| Product Transactions | Product Transaction Create |
+| :---: | :---: |
+| ![Product Transactions](docs/product-transactions.png) | ![Product Transaction Create](docs/product-transaction-new.png) |
+
+| Production Screen |
+| :---: |
+| ![Production](docs/production-screen.png) |
 
 ## Architecture & State Management
 
